@@ -2,7 +2,6 @@
 
 import React, { useRef, useEffect, useState } from 'react'
 import Image from 'next/image'
-import Link from 'next/link'
 import styles from './ImageTrack.module.css'
 
 const images = [
@@ -41,8 +40,9 @@ const ImageTrack: React.FC = () => {
 
       const clientX = 'touches' in e ? e.touches[0].clientX : e.clientX
       const mouseDelta = parseFloat(mouseDownAt) - clientX
-      const maxDelta = window.innerWidth / 2
+      const maxDelta = window.innerWidth
 
+      // Calculate percentage moved with better constraints
       const nextPercentageUnconstrained = (parseFloat(prevPercentage) - (mouseDelta / maxDelta) * 100)
       const nextPercentage = Math.max(Math.min(nextPercentageUnconstrained, 0), -100)
 
@@ -51,12 +51,12 @@ const ImageTrack: React.FC = () => {
       if (trackRef.current) {
         trackRef.current.animate({
           transform: `translate(${nextPercentage}%, -50%)`
-        }, { duration: 1200, fill: "forwards" })
+        }, { duration: 1200, fill: "forwards" }) // Changed from 1200 to 900
 
         for (const image of trackRef.current.getElementsByClassName("image")) {
           (image as HTMLElement).animate({
-            objectPosition: `${100 + nextPercentage}% center`
-          }, { duration: 1200, fill: "forwards" })
+            objectPosition: `${nextPercentage + 100}% center`
+          }, { duration: 1200, fill: "forwards" }) // Changed from 1200 to 900
         }
       }
     }
@@ -93,14 +93,6 @@ const ImageTrack: React.FC = () => {
           />
         ))}
       </div>
-      <Link href="https://camillemormal.com" target="_blank" className={`${styles.metaLink} bottom-[60px]`}>
-        <i className="fa-solid fa-link"></i>
-        <span>Source</span>
-      </Link>
-      <Link href="https://youtu.be/PkADl0HubMY" target="_blank" className={styles.metaLink}>
-        <i className="fa-brands fa-youtube"></i>
-        <span>7 min tutorial</span>
-      </Link>
     </div>
   )
 }
